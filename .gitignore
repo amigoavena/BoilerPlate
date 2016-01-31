@@ -1,0 +1,10 @@
+src/frontend/node_modules
+src/main/resources/static
+src/frontend/.tmp
+src/frontend/bower_components
+.settings
+.project
+.classpath
+.gradle
+build
+bin
