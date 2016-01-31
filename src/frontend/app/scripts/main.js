@@ -1,1 +1,3 @@
-console.log('\'Allo \'Allo!'); // eslint-disable-line no-console
+$(document).on('pageinit',function(){
+  console.log('pageinit event fired!');
+});

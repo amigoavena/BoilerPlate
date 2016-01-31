@@ -5,20 +5,38 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Enumeration;
 
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.elavena.domain.ObjectTest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
-
+@Component
 public class SerialTest implements SerialPortEventListener {
 	SerialPort serialPort;
+	
+	private static final Logger logger = LoggerFactory.getLogger(SerialTest.class);
+
+	
+	@Autowired
+	private ObjectTest storeObject;
+	
         /** The port we're normally going to use. */
 	private static final String PORT_NAMES[] = { 
-			"/dev/tty.usbserial-A9007UX1", // Mac OS X
-                        "/dev/ttyACM0", // Raspberry Pi
-			"/dev/ttyUSB0", // Linux
-			"COM3", // Windows
+			"/dev/tty.usbserial-DA017UOA"//, // Mac OS X
+                       // "/dev/ttyACM0", // Raspberry Pi
+			//"/dev/ttyUSB0", // Linux
+			//"COM3", // Windows
 	};
 	/**
 	* A BufferedReader which will be fed by a InputStreamReader 
@@ -33,18 +51,22 @@ public class SerialTest implements SerialPortEventListener {
 	/** Default bits per second for COM port. */
 	private static final int DATA_RATE = 9600;
 
+	@PostConstruct
 	public void initialize() {
                 // the next line is for Raspberry Pi and 
                 // gets us into the while loop and was suggested here was suggested http://www.raspberrypi.org/phpBB3/viewtopic.php?f=81&t=32186
-                System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0");
+                //System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0");
 
 		CommPortIdentifier portId = null;
 		Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
 
 		//First, Find an instance of serial port as set in PORT_NAMES.
+		System.out.println(ReflectionToStringBuilder.toString(portEnum));
 		while (portEnum.hasMoreElements()) {
 			CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
+			System.out.println(currPortId.getName());
 			for (String portName : PORT_NAMES) {
+				System.out.println(portName);
 				if (currPortId.getName().equals(portName)) {
 					portId = currPortId;
 					break;
@@ -94,10 +116,16 @@ public class SerialTest implements SerialPortEventListener {
 	 * Handle an event on the serial port. Read the data and print it.
 	 */
 	public synchronized void serialEvent(SerialPortEvent oEvent) {
+		ObjectMapper mapper = new ObjectMapper();
 		if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
 			try {
 				String inputLine=input.readLine();
-				System.out.println(inputLine);
+				ObjectTest tempObject = mapper.readValue(inputLine, ObjectTest.class);
+				storeObject.setHumidity(tempObject.getHumidity());
+				storeObject.setTemp(tempObject.getTemp());
+				logger.debug(ReflectionToStringBuilder.toString(tempObject));
+				//System.out.println(inputLine);
+				logger.debug(inputLine);
 			} catch (Exception e) {
 				System.err.println(e.toString());
 			}
@@ -105,7 +133,7 @@ public class SerialTest implements SerialPortEventListener {
 		// Ignore all the other eventTypes, but you should consider the other ones.
 	}
 
-	public static void mainPURURUUU(String[] args) throws Exception {
+	public static void mainPURURU(String[] args) throws Exception {
 		SerialTest main = new SerialTest();
 		main.initialize();
 		Thread t=new Thread() {
@@ -118,4 +146,5 @@ public class SerialTest implements SerialPortEventListener {
 		t.start();
 		System.out.println("Started");
 	}
+	
 }

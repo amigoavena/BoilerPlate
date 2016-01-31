@@ -28,6 +28,7 @@ dependencies {
     }
     //Need to install RXTX 
     compile('org.rxtx:rxtx:2.1.7')
+    compile('org.apache.commons:commons-lang3:3.4')
     compile("org.springframework.boot:spring-boot-starter-jetty")
     // end::jetty[]
     // tag::actuator[]
