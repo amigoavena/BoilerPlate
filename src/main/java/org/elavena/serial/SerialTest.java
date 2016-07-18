@@ -12,7 +12,6 @@ import org.elavena.domain.ObjectTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -21,7 +20,7 @@ import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
-@Component
+
 public class SerialTest implements SerialPortEventListener {
 	SerialPort serialPort;
 	
@@ -91,7 +90,7 @@ public class SerialTest implements SerialPortEventListener {
 
 			// open the streams
 			input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
-			output = serialPort.getOutputStream();
+			setOutput(serialPort.getOutputStream());
 
 			// add event listeners
 			serialPort.addEventListener(this);
@@ -120,11 +119,12 @@ public class SerialTest implements SerialPortEventListener {
 		if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
 			try {
 				String inputLine=input.readLine();
+				/*
 				ObjectTest tempObject = mapper.readValue(inputLine, ObjectTest.class);
 				storeObject.setHumidity(tempObject.getHumidity());
 				storeObject.setTemp(tempObject.getTemp());
 				logger.debug(ReflectionToStringBuilder.toString(tempObject));
-				//System.out.println(inputLine);
+				//System.out.println(inputLine);*/
 				logger.debug(inputLine);
 			} catch (Exception e) {
 				System.err.println(e.toString());
@@ -133,18 +133,29 @@ public class SerialTest implements SerialPortEventListener {
 		// Ignore all the other eventTypes, but you should consider the other ones.
 	}
 
-	public static void mainPURURU(String[] args) throws Exception {
+	public static void mainasdasd(String[] args) throws Exception {
 		SerialTest main = new SerialTest();
 		main.initialize();
 		Thread t=new Thread() {
 			public void run() {
+				
+				
 				//the following line will keep this app alive for 1000 seconds,
 				//waiting for events to occur and responding to them (printing incoming messages to console).
 				try {Thread.sleep(1000000);} catch (InterruptedException ie) {}
 			}
 		};
+		main.output.write("1\n".getBytes());
 		t.start();
 		System.out.println("Started");
+	}
+
+	public OutputStream getOutput() {
+		return output;
+	}
+
+	public void setOutput(OutputStream output) {
+		this.output = output;
 	}
 	
 }

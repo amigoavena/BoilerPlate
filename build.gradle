@@ -18,6 +18,12 @@ buildscript {
     }
 }
 
+configurations {
+    all {
+        exclude module: 'spring-boot-starter-logging'
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -30,6 +36,9 @@ dependencies {
     compile('org.rxtx:rxtx:2.1.7')
     compile('org.apache.commons:commons-lang3:3.4')
     compile("org.springframework.boot:spring-boot-starter-jetty")
+
+    compile('org.springframework.boot:spring-boot-starter-log4j2')
+
     // end::jetty[]
     // tag::actuator[]
     compile("org.springframework.boot:spring-boot-starter-actuator")

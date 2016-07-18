@@ -39,9 +39,14 @@
 			<h1>Chibipompirinachan!</h1>
 			<p class="lead">Current Temperature and Humidity.</p>
 			<p>
-				<a id="refresh" class="btn btn-lg btn-success" href="#">Splendid!
-					<span class="glyphicon glyphicon-ok"></span>
-				</a>
+				<button class="colorChange" colorid="1" type="button" class="btn btn-default">White</button>
+				<button class="colorChange" colorid="2" type="button" class="btn btn-default">Verde</button>
+				<button class="colorChange" colorid="3" type="button" class="btn btn-default">Rojo</button>
+				<button class="colorChange" colorid="4" type="button" class="btn btn-default">??</button>
+				<button class="colorChange" colorid="5" type="button" class="btn btn-default">Morado</button>
+				<button class="colorChange" colorid="6" type="button" class="btn btn-default">Azul</button>
+				<button class="colorChange" colorid="7" type="button" class="btn btn-default">Azulito</button>
+				<button class="colorChange" colorid="8" type="button" class="btn btn-default">off</button>
 			</p>
 		</div>
 
@@ -53,14 +58,11 @@
 				<p>HTML5 Boilerplate is a professional front-end template for
 					building fast, robust, and adaptable web apps or sites.</p>
 
-
-
 				<h4>
 					<a href="http://getbootstrap.com/">Bootstrap</a>
 				</h4>
 				<p>Sleek, intuitive, and powerful mobile first front-end
 					framework for faster and easier web development.</p>
-
 
 			</div>
 		</div>
@@ -120,25 +122,18 @@
 	<script>
 		$(document).on('ready', function() {
 			console.log("test");
-			$("#refresh").on('click', function() {
-				fetchData();
+			$(".colorChange").on('click', function() {
+				var self = this;
+				$.ajax({
+					//url : "./scripts/test.json",
+					url:"./lightLed?color="+$(self).attr('colorid'),
+					crossDomain: true,
+					dataType : 'json'
+				}).complete(function(data,json) {
+					console.log("changed");
+				});
 			});
-			fetchData();
-			setInterval(function(){ fetchData(); }, 5000);
 		});
-		function fetchData() {
-			$.ajax({
-				//url : "./scripts/test.json",
-				url:"./getTemp",
-				crossDomain: true,
-				dataType : 'json'
-			}).complete(function(data,json) {
-				console.log(data.responseJSON);
-				console.log(json);
-				var response = data.responseJSON;
-				$("#refresh").text(response.temp+", "+response.humidity);
-			});
-		};
 	</script>
 </body>
 </html>
