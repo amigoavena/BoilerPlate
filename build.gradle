@@ -43,6 +43,9 @@ dependencies {
     // tag::actuator[]
     compile("org.springframework.boot:spring-boot-starter-actuator")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+	compile ('commons-lang:commons-lang:2.6')
+	compile ('org.apache.httpcomponents:httpclient')
+    
 	testCompile("junit:junit")
 }
 

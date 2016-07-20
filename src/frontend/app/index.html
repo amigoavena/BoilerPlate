@@ -37,16 +37,9 @@
 
 		<div class="jumbotron">
 			<h1>Chibipompirinachan!</h1>
-			<p class="lead">Current Temperature and Humidity.</p>
+			<p class="lead">Solo hay una lucesita....</p>
 			<p>
-				<button class="colorChange" colorid="1" type="button" class="btn btn-default">White</button>
-				<button class="colorChange" colorid="2" type="button" class="btn btn-default">Verde</button>
-				<button class="colorChange" colorid="3" type="button" class="btn btn-default">Rojo</button>
-				<button class="colorChange" colorid="4" type="button" class="btn btn-default">??</button>
-				<button class="colorChange" colorid="5" type="button" class="btn btn-default">Morado</button>
-				<button class="colorChange" colorid="6" type="button" class="btn btn-default">Azul</button>
-				<button class="colorChange" colorid="7" type="button" class="btn btn-default">Azulito</button>
-				<button class="colorChange" colorid="8" type="button" class="btn btn-default">off</button>
+				<button id="light1" class="btn btn-primary" type="submit">On</button>
 			</p>
 		</div>
 
@@ -121,19 +114,29 @@
 
 	<script>
 		$(document).on('ready', function() {
-			console.log("test");
-			$(".colorChange").on('click', function() {
+			var urlStatus = "lightStatus";
+			var urlStatusChange = "lightChange";
+			$.getJSON(urlStatus, function( data ) {
+				changeStatusAndText(data,$());
+			});
+			$("#light1").on('click', function() {
 				var self = this;
-				$.ajax({
-					//url : "./scripts/test.json",
-					url:"./lightLed?color="+$(self).attr('colorid'),
-					crossDomain: true,
-					dataType : 'json'
-				}).complete(function(data,json) {
-					console.log("changed");
+				var turnON = $(this).attr("status"); 
+				$.getJSON( urlStatusChange+"?turnOn="+turnON, function( data ) {
+					changeStatusAndText(data);
 				});
 			});
 		});
+		function changeStatusAndText(json){
+			var button = $("#light1");
+			if(json.status == 1){
+				button.html("OFF");
+				button.attr("status",false);
+			} else {
+				button.html("ON");
+				button.attr("status",true);
+			}
+		}
 	</script>
 </body>
 </html>
